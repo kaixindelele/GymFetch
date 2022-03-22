@@ -42,6 +42,7 @@ class FetchEnv(robot_env.RobotEnv):
         self.target_range = target_range
         self.distance_threshold = distance_threshold
         self.reward_type = reward_type
+        self.target_goal = np.array([1.35, 0.8, 0.37])
 
         super(FetchEnv, self).__init__(
             model_path=model_path, n_substeps=n_substeps, n_actions=4,
@@ -105,10 +106,12 @@ class FetchEnv(robot_env.RobotEnv):
             object_pos = object_rot = object_velp = object_velr = object_rel_pos = np.zeros(0)
             # check the gg == ag:
             gg2dg_xy = np.linalg.norm(grip_pos[:2]-self.target_goal[:2])
-            if gg2dg_xy < 0.08:
+            if gg2dg_xy < 0.03:
                 object_pos = grip_pos
             else:
-                object_pos = np.array([self.target_goal[0], self.target_goal[1], 0.41])
+                object_pos = np.array([self.target_goal[0],
+                                       self.target_goal[1],
+                                       0.44])
         gripper_state = robot_qpos[-2:]
         gripper_vel = robot_qvel[-2:] * dt  # change to a scalar if the gripper is made symmetric
 
@@ -161,31 +164,43 @@ class FetchEnv(robot_env.RobotEnv):
         hsw4y = half_hole_size
         w4x = cx + half_hole_size + (hsw1y - half_hole_size) / 2.0
         w4y = cy
-        print("((w1x, w1y), (w2x, w2y), (w3x, w3y), (w4x, w4y)):",
-              ((w1x, w1y), (w2x, w2y), (w3x, w3y), (w4x, w4y)))
-        print("((hsw1x, hsw1y), (hsw2x, hsw2y), (hsw3x, hsw3y), (hsw4x, hsw4y)):",
-              ((hsw1x, hsw1y), (hsw2x, hsw2y), (hsw3x, hsw3y), (hsw4x, hsw4y)))
+        # print("((w1x, w1y), (w2x, w2y), (w3x, w3y), (w4x, w4y)):",
+        #       ((w1x, w1y), (w2x, w2y), (w3x, w3y), (w4x, w4y)))
+        # print("((hsw1x, hsw1y), (hsw2x, hsw2y), (hsw3x, hsw3y), (hsw4x, hsw4y)):",
+        #       ((hsw1x, hsw1y), (hsw2x, hsw2y), (hsw3x, hsw3y), (hsw4x, hsw4y)))
         return (w1x, w1y), (w2x, w2y), (w3x, w3y), (w4x, w4y)
 
-    def _reset_sim(self):
+    def sample_dg(self):
+        target_x = np.random.random() * 0.35 + 1.1
+        target_y = np.random.random() * 0.35 + 0.5
         self.target_goal = self.sim.data.get_site_xpos('target0')
-        self.sim.set_state(self.initial_state)
+        target_goal = np.array([target_x, target_y, self.target_goal[2]])
+        self._render_callback()
+        return target_goal
 
-        # Randomize start position of object.
-        if self.has_object:
-            object_xpos = self.initial_gripper_xpos[:2]
-            while np.linalg.norm(object_xpos - self.initial_gripper_xpos[:2]) < 0.1:
-                object_xpos = self.initial_gripper_xpos[:2] + self.np_random.uniform(-self.obj_range, self.obj_range, size=2)
-            object_qpos = self.sim.data.get_joint_qpos('object0:joint')
-            assert object_qpos.shape == (7,)
-            object_qpos[:2] = object_xpos
-            self.sim.data.set_joint_qpos('object0:joint', object_qpos)
+    def _reset_sim(self):
+        self.sim.set_state(self.initial_state)
+        self.target_goal = self.sample_dg()
+
+        (w1x, w1y), (w2x, w2y), (w3x, w3y), (w4x, w4y) = self.reset_hole([self.target_goal[0],
+                                                                          self.target_goal[1]])
+
+        self.sim.model.body_pos[self.sim.model.body_name2id('w1')] = np.array(
+            [w1x, w1y, self.sim.model.body_pos[self.sim.model.body_name2id('w1')][2]])
+
+        self.sim.model.body_pos[self.sim.model.body_name2id('w2')] = np.array(
+            [w2x, w2y, self.sim.model.body_pos[self.sim.model.body_name2id('w2')][2]])
+        
+        self.sim.model.body_pos[self.sim.model.body_name2id('w3')] = np.array(
+            [w3x, w3y, self.sim.model.body_pos[self.sim.model.body_name2id('w3')][2]])
+
+        self.sim.model.body_pos[self.sim.model.body_name2id('w4')] = np.array(
+            [w4x, w4y, self.sim.model.body_pos[self.sim.model.body_name2id('w4')][2]])
 
         self.sim.forward()
         return True
 
     def _sample_goal(self):
-        self.target_goal = self.sim.data.get_site_xpos('target0')
         goal = self.target_goal
         return goal.copy()
 

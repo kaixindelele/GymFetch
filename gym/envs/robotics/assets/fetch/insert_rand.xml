@@ -19,7 +19,8 @@
 			<geom size="0.25 0.35 0.18" type="box" mass="2000" material="table_mat"></geom>
 		</body>
 
-		<site name="target0" pos="1.35 0.8 0.44" size="0.015 0.015 0.015" rgba="1 1 0 1" type="sphere"></site>
+		<site name="target0" pos="1.35 0.8 0.37" size="0.015 0.015 0.015" rgba="1 1 0 1" type="sphere"></site>
+		<!--<site name="target0" pos="1.345 0.815 0.37" size="0.015 0.015 0.015" rgba="1 1 0 1" type="sphere"></site>-->
 
 		<body name="w1" pos="1.29 0.8 0.4">
 		    <geom name="w1" type="box" size="0.04 0.1 0.04" rgba=".6 .6 .5 1" contype="15" conaffinity="15" material="floor_mat"/>
@@ -36,12 +37,6 @@
 		<body name="w4" pos="1.41 0.8 0.4">
 		    <geom name="w4" type="box" size="0.04 0.02 0.04" rgba=".6 .6 .5 1" contype="15" conaffinity="15" material="floor_mat"/>
 		</body>
-		<!---->
-		<!--<body name="object0" pos="0.025 0.025 0.025">-->
-			<!--<joint name="object0:joint" type="free" damping="0.01"></joint>-->
-			<!--<geom size="0.025 0.025 0.025" type="box" condim="3" name="object0" material="block_mat" mass="2"></geom>-->
-			<!--<site name="object0" pos="0 0 0" size="0.02 0.02 0.02" rgba="1 0 0 1" type="sphere"></site>-->
-		<!--</body>-->
 
 		<light directional="true" ambient="0.2 0.2 0.2" diffuse="0.8 0.8 0.8" specular="0.3 0.3 0.3" castshadow="false" pos="0 0 4" dir="0 0 -1" name="light0"></light>
 	</worldbody>
