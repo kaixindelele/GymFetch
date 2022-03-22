@@ -82,6 +82,15 @@ self.sim.model.body_pos[self.sim.model.body_name2id('w4')] = np.array(
 ## 最终效果：
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/6f6229796b264ebab4b3a441c35072c8.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAaGVoZWRhZGFx,size_20,color_FFFFFF,t_70,g_se,x_16)
 
+## 抽屉任务：
+### 横版：
+![在这里插入图片描述](https://img-blog.csdnimg.cn/53887119af214873a1d6049f24d4e69e.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAaGVoZWRhZGFx,size_20,color_FFFFFF,t_70,g_se,x_16)
+### 竖版：
+![在这里插入图片描述](https://img-blog.csdnimg.cn/999f3ed00e6c47a09e4799201656ca07.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAaGVoZWRhZGFx,size_20,color_FFFFFF,t_70,g_se,x_16)
+我想的是将整个抽屉设置成刚体，夹爪穿不过去的那种，但是现在出现各种奇怪的问题，如果将里面的抽屉joint damp设置的低，那么就会自己抖动，如果设置damp大了，那么夹爪会想着直接穿过外壳，直接拉着里面的抽屉往外动。
+
+关节limited属性也不起作用，有点迷惑。回头再调调。
+
 ## 联系方式：
 ps: 欢迎做强化的同学加群一起学习：
 
